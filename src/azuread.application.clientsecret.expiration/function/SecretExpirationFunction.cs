@@ -38,7 +38,7 @@ namespace azuread.application.clientsecret.expiration
         }
 
         [FunctionName("SecretExpirationFunction")]
-        public async Task Run([TimerTrigger("0 0 0 * * *", RunOnStartup = true)] TimerInfo timer)
+        public async Task Run([TimerTrigger("0 0 0 * * *", RunOnStartup = false)] TimerInfo timer)
         {
             try
             {
