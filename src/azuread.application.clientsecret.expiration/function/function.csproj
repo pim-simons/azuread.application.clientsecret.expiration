@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <AzureFunctionsVersion>v3</AzureFunctionsVersion>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <AssemblyName>azuread.application.clientsecret.expiration</AssemblyName>
+    <RootNamespace>azuread.application.clientsecret.expiration</RootNamespace>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <None Update="local.settings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="host.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="local.settings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Arcus.EventGrid.All" Version="3.1.0" />
+    <PackageReference Include="Arcus.Observability.Telemetry.AzureFunctions" Version="2.2.2" />
+    <PackageReference Include="Arcus.Observability.Telemetry.Serilog.Sinks.Applicationinsights" Version="2.2.2" />
+    <PackageReference Include="Arcus.Security.AzureFunctions" Version="1.6.0" />
+    <PackageReference Include="Arcus.Security.Providers.AzureKeyVault" Version="1.6.0" />
+    <PackageReference Include="Arcus.WebApi.Logging.AzureFunctions" Version="1.4.0" />
+    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.0.13" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.14.0" />
+    <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="4.0.0" />
+  </ItemGroup>
+</Project>
