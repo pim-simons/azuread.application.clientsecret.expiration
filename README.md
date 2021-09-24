@@ -4,10 +4,7 @@ Applications within Azure Active Directory can have multiple client secrets, unf
 
 ### Configuration
 The following configuration items need to be set:
-- clientId (the clientId used to call the Microsoft Graph API)
-- clientSecret (the clientSecret used to call the Microsoft Graph API)
-- tenantId (the tenantId of the Azure Active Directory you want to check)
 - topicEndpoint (the endpoint of the Event Grid Topic you want to publish the events to)
 - endpointKey (the key of the Event Grid Topic you want to publish the events to)
 
-Note that the application registration you are using to call the Microsoft Graph API will need Application.Read.All permission. 
+The Function uses Managed Identity to authenticate to Azure Active Directory, this can be configured according to: https://docs.microsoft.com/en-us/azure/app-service/scenario-secure-app-access-microsoft-graph-as-app?tabs=azure-cli%2Ccommand-line#grant-access-to-microsoft-graph. Note that the function you are using to call the Microsoft Graph API will need Application.Read.All permission. 

@@ -8,6 +8,7 @@ using System.Net.Mime;
 using System.Threading.Tasks;
 using Arcus.EventGrid.Publishing;
 using Arcus.Security.Core;
+using Azure.Identity;
 using CloudNative.CloudEvents;
 using GuardNet;
 using Microsoft.Azure.WebJobs;
@@ -42,8 +43,8 @@ namespace azuread.application.clientsecret.expiration
         {
             try
             {
-                AuthenticationResult authenticationResult = await GetToken();
-                string applications = await GetApplications(authenticationResult);
+                string token = await GetToken();
+                string applications = await GetApplications(token);
                 List<CloudEvent> events = new List<CloudEvent>();
 
                 foreach (var application in JArray.Parse(JObject.Parse(applications)["value"].ToString()))
@@ -91,25 +92,17 @@ namespace azuread.application.clientsecret.expiration
             }
         }
 
-        private async Task<AuthenticationResult> GetToken()
+        private async Task<string> GetToken()
         {
-            string clientId = await _secretProvider.GetRawSecretAsync("clientId");
-            string clientSecret = await _secretProvider.GetRawSecretAsync("clientSecret");
-            string tenantId = await _secretProvider.GetRawSecretAsync("tenantId");
+            var credential = new DefaultAzureCredential();
+            var token = await credential.GetTokenAsync(
+                new Azure.Core.TokenRequestContext(
+                    new[] { "https://graph.microsoft.com/.default" }));
 
-            var ccab = ConfidentialClientApplicationBuilder
-                .Create(clientId)
-                .WithClientSecret(clientSecret)
-                .WithTenantId(tenantId)
-                .Build();
-
-            AcquireTokenForClientParameterBuilder tokenResult = ccab.AcquireTokenForClient(new List<string> { "https://graph.microsoft.com/.default" });
-            AuthenticationResult token = await tokenResult.ExecuteAsync();
-
-            return token;
+            return token.Token;
         }
 
-        private async Task<string> GetApplications(AuthenticationResult authenticationResult)
+        private async Task<string> GetApplications(string token)
         {
             var durationMeasurement = new Stopwatch();
             durationMeasurement.Start();
@@ -121,7 +114,7 @@ namespace azuread.application.clientsecret.expiration
             {
                 request = new HttpRequestMessage(HttpMethod.Get, "https://graph.microsoft.com/v1.0/applications");
                 request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", authenticationResult.AccessToken);
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 HttpResponseMessage httpResponseMessage = await httpClient.SendAsync(request);
                 responseStatusCode = httpResponseMessage.StatusCode;
